@@ -1,7 +1,7 @@
 package com.bluebelt.fulfillment.exception;
 
-import com.sopromadze.blogapi.payload.ApiResponse;
-import com.sopromadze.blogapi.payload.ExceptionResponse;
+import com.bluebelt.fulfillment.payload.response.ApiResponse;
+import com.bluebelt.fulfillment.payload.response.ExceptionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -76,8 +76,8 @@ public class RestControllerExceptionHandler {
 		for (FieldError error : fieldErrors) {
 			messages.add(error.getField() + " - " + error.getDefaultMessage());
 		}
-		return new ResponseEntity<>(new ExceptionResponse(messages, HttpStatus.BAD_REQUEST.getReasonPhrase(),
-				HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(new ExceptionResponse(HttpStatus.BAD_REQUEST.getReasonPhrase(),
+				HttpStatus.BAD_REQUEST.value(), messages), HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler({ MethodArgumentTypeMismatchException.class })
@@ -88,8 +88,8 @@ public class RestControllerExceptionHandler {
 				+ Objects.requireNonNull(ex.getRequiredType()).getSimpleName() + "'";
 		List<String> messages = new ArrayList<>(1);
 		messages.add(message);
-		return new ResponseEntity<>(new ExceptionResponse(messages, HttpStatus.BAD_REQUEST.getReasonPhrase(),
-				HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(new ExceptionResponse(HttpStatus.BAD_REQUEST.getReasonPhrase(),
+				HttpStatus.BAD_REQUEST.value(), messages), HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler({ HttpRequestMethodNotSupportedException.class })
@@ -101,8 +101,8 @@ public class RestControllerExceptionHandler {
 		List<String> messages = new ArrayList<>(1);
 		messages.add(message);
 
-		return new ResponseEntity<>(new ExceptionResponse(messages, HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase(),
-				HttpStatus.METHOD_NOT_ALLOWED.value()), HttpStatus.METHOD_NOT_ALLOWED);
+		return new ResponseEntity<>(new ExceptionResponse(HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase(),
+				HttpStatus.METHOD_NOT_ALLOWED.value(), messages), HttpStatus.METHOD_NOT_ALLOWED);
 	}
 
 	@ExceptionHandler({ HttpMessageNotReadableException.class })
@@ -112,7 +112,7 @@ public class RestControllerExceptionHandler {
 		String message = "Please provide Request Body in valid JSON format";
 		List<String> messages = new ArrayList<>(1);
 		messages.add(message);
-		return new ResponseEntity<>(new ExceptionResponse(messages, HttpStatus.BAD_REQUEST.getReasonPhrase(),
-				HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(new ExceptionResponse(HttpStatus.BAD_REQUEST.getReasonPhrase(),
+				HttpStatus.BAD_REQUEST.value(), messages), HttpStatus.BAD_REQUEST);
 	}
 }

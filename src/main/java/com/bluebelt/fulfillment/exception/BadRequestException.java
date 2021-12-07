@@ -1,6 +1,6 @@
 package com.bluebelt.fulfillment.exception;
 
-import com.sopromadze.blogapi.payload.ApiResponse;
+import com.bluebelt.fulfillment.payload.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
