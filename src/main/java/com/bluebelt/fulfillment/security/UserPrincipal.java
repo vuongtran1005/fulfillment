@@ -32,8 +32,6 @@ public class UserPrincipal implements UserDetails {
     public static UserPrincipal build(User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName().name())).collect(Collectors.toList());
-        System.out.println(new UserPrincipal(user, authorities).getUsername());
-        System.out.println("BUILD");
         return new UserPrincipal(user, authorities);
     }
 

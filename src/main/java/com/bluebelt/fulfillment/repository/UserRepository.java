@@ -3,7 +3,6 @@ package com.bluebelt.fulfillment.repository;
 import com.bluebelt.fulfillment.exception.ResourceNotFoundException;
 import com.bluebelt.fulfillment.model.user.User;
 import com.bluebelt.fulfillment.security.UserPrincipal;
-import org.springframework.stereotype.Repository;
 
 import javax.validation.constraints.NotBlank;
 import java.util.Optional;

@@ -122,7 +122,7 @@ public class AuthenticationController {
 
         if(strRoles == null) {
             Role userRole = roleDAO.findByName(RoleName.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException(ROLE_IS_NOT_FOUND));
+                    .orElseThrow(() -> new AppException(ROLE_IS_NOT_FOUND));
 
             roles.add(userRole);
         } else {

@@ -8,5 +8,8 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @AuthenticationPrincipal
+/**
+ * @AuthenticationPrincipalđể truy cập người dùng hiện đã được xác thực trong bộ điều khiển.
+ */
 public @interface CurrentUser {
 }
