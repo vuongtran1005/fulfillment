@@ -28,4 +28,10 @@ public class AppConstants {
 	public static final String TODO = "ToDo";
 
 	public static final String YOU_DON_T_HAVE_PERMISSION_TO_MAKE_THIS_OPERATION = "You don't have permission to make this operation";
+
+	public static final String ROLE_IS_NOT_FOUND = "Error: Role is not found";
+
+	public static final String USERNAME_IS_ALREADY = "Username is already taken";
+
+	public static final String EMAIL_IS_ALREADY = "Email is already taken";
 }

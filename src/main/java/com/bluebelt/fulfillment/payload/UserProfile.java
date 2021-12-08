@@ -1,5 +1,6 @@
 package com.bluebelt.fulfillment.payload;
 
+import com.bluebelt.fulfillment.model.user.Info;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,11 +16,10 @@ public class UserProfile {
 
     private Long id;
     private String username;
-    private String firstName;
-    private String lastName;
 
-    private Instant joinedAt;
+    private Info info;
     private String email;
-    private String phone;
+    private Instant joinedAt;
+
 
 }

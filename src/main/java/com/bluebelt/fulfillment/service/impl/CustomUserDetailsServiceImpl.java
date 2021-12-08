@@ -27,10 +27,14 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService, CustomU
     }
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
+        System.out.println("OK");
         User user = userDAO.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
                 .orElseThrow(() -> new UsernameNotFoundException(
                         String.format("User not found with this username or email: %s", usernameOrEmail)));
+        System.out.println("OK1");
+        System.out.println(UserPrincipal.build(user));
         return UserPrincipal.build(user);
     }
 }

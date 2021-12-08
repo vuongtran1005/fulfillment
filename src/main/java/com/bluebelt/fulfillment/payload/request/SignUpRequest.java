@@ -1,8 +1,6 @@
 package com.bluebelt.fulfillment.payload.request;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -10,7 +8,7 @@ import javax.validation.constraints.Size;
 import java.util.Set;
 
 @Data
-public class SignupRequest {
+public class SignUpRequest {
 
     @NotEmpty(message = "Username must not be empty")
     @Size(min = 3, max = 30, message = "Username must be between 3 and 30 characters")

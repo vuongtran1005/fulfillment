@@ -1,25 +1,30 @@
 package com.bluebelt.fulfillment.service.impl;
 
-import com.bluebelt.fulfillment.exception.BadRequestException;
+import com.bluebelt.fulfillment.exception.*;
 import com.bluebelt.fulfillment.model.role.Role;
 import com.bluebelt.fulfillment.model.role.RoleName;
+import com.bluebelt.fulfillment.model.user.Info;
 import com.bluebelt.fulfillment.model.user.User;
 import com.bluebelt.fulfillment.payload.UserIdentityAvailability;
 import com.bluebelt.fulfillment.payload.UserProfile;
 import com.bluebelt.fulfillment.payload.UserSummary;
-import com.bluebelt.fulfillment.payload.request.SignupRequest;
+import com.bluebelt.fulfillment.payload.request.InfoRequest;
+import com.bluebelt.fulfillment.payload.request.SignUpRequest;
 import com.bluebelt.fulfillment.payload.response.ApiResponse;
 import com.bluebelt.fulfillment.repository.RoleRepository;
 import com.bluebelt.fulfillment.repository.UserRepository;
 import com.bluebelt.fulfillment.security.UserPrincipal;
 import com.bluebelt.fulfillment.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+
+import static com.bluebelt.fulfillment.utils.AppConstants.*;
 
 @RequiredArgsConstructor
 @Service
@@ -27,6 +32,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userDAO;
     private final RoleRepository roleDAO;
+    private final PasswordEncoder passwordEncoder;
 
     // password
 
@@ -52,29 +58,27 @@ public class UserServiceImpl implements UserService {
     public UserProfile getUserProfile(String username) {
         User user = userDAO.getUserByName(username);
         return new UserProfile().builder().id(user.getId()).username(user.getUsername())
-                .firstName(user.getFirstName()).lastName(user.getLastName())
-                .joinedAt(user.getCreatedAt()).email(user.getEmail())
-                .phone(user.getPhone()).build();
+                .email(user.getEmail()).info(user.getInfo()).joinedAt(user.getCreatedAt()).build();
     }
 
     @Override
-    public User addUser(SignupRequest signupRequest) {
-        if(userDAO.existsByUsername(signupRequest.getUsername())) {
-            ApiResponse apiResponse = new ApiResponse(Boolean.FALSE, "Username is already taken");
+    public User addUser(SignUpRequest signUpRequest) {
+        if(userDAO.existsByUsername(signUpRequest.getUsername())) {
+            ApiResponse apiResponse = new ApiResponse(Boolean.FALSE, USERNAME_IS_ALREADY);
             throw new BadRequestException(apiResponse);
         }
 
-        if(userDAO.existsByEmail(signupRequest.getEmail())) {
-            ApiResponse apiResponse = new ApiResponse(Boolean.FALSE, "Email is already taken");
+        if(userDAO.existsByEmail(signUpRequest.getEmail())) {
+            ApiResponse apiResponse = new ApiResponse(Boolean.FALSE, EMAIL_IS_ALREADY);
             throw new BadRequestException(apiResponse);
         }
 
-        Set<String> strRoles = signupRequest.getRoles();
+        Set<String> strRoles = signUpRequest.getRoles();
         Set<Role> roles = new HashSet<>();
 
         if(strRoles == null) {
             Role userRole = roleDAO.findByName(RoleName.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found"));
+                    .orElseThrow(() -> new RuntimeException(ROLE_IS_NOT_FOUND));
 
             roles.add(userRole);
         } else {
@@ -82,7 +86,7 @@ public class UserServiceImpl implements UserService {
                 switch (role) {
                     case "admin":
                         Role adminRole = roleDAO.findByName(RoleName.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found"));
+                                .orElseThrow(() -> new RuntimeException(ROLE_IS_NOT_FOUND));
 
                         roles.add(adminRole);
 
@@ -90,7 +94,7 @@ public class UserServiceImpl implements UserService {
 
                     case "moderator":
                         Role moderatorRole = roleDAO.findByName(RoleName.ROLE_MODERATOR)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found"));
+                                .orElseThrow(() -> new RuntimeException(ROLE_IS_NOT_FOUND));
 
                         roles.add(moderatorRole);
 
@@ -98,7 +102,7 @@ public class UserServiceImpl implements UserService {
 
                     default:
                         Role userRole = roleDAO.findByName(RoleName.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found"));
+                                .orElseThrow(() -> new RuntimeException(ROLE_IS_NOT_FOUND));
 
                         roles.add(userRole);
 
@@ -107,38 +111,98 @@ public class UserServiceImpl implements UserService {
             });
         }
 
-        User user = new User().builder().username(signupRequest.getUsername()).email(signupRequest.getEmail())
-                .firstName(signupRequest.getFirstName()).lastName(signupRequest.getLastName())
-                .phone(signupRequest.getPhone()).roles(roles)
-                .password(p).build();
+        User user = new User().builder().username(signUpRequest.getUsername()).email(signUpRequest.getEmail())
+                .roles(roles).password(passwordEncoder.encode((signUpRequest.getPassword()))).build();
 
-
-
-        return null;
+        return userDAO.save(user);
     }
 
     @Override
     public User updateUser(User newUser, String username, UserPrincipal currentUser) {
-        return null;
+
+        User user = userDAO.getUserByName(username);
+        if (user.getId().equals(currentUser.getId())
+                || currentUser.getAuthorities().contains(new SimpleGrantedAuthority(RoleName.ROLE_ADMIN.toString()))) {
+            user.setPassword(passwordEncoder.encode(newUser.getPassword()));
+            user.setInfo(newUser.getInfo());
+
+            return userDAO.save(user);
+
+        }
+
+        ApiResponse apiResponse = new ApiResponse(Boolean.FALSE, "You don't have permission to update profile of: " + username);
+        throw new UnauthorizedException(apiResponse);
+
+
     }
 
     @Override
     public ApiResponse deleteUser(String username, UserPrincipal currentUser) {
-        return null;
+
+        User user = userDAO.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", username));
+        if (!user.getId().equals(currentUser.getId()) || !currentUser.getAuthorities()
+                .contains(new SimpleGrantedAuthority(RoleName.ROLE_ADMIN.toString()))) {
+            ApiResponse apiResponse = new ApiResponse(Boolean.FALSE, "You don't have permission to delete profile of: " + username);
+            throw new AccessDeniedException(apiResponse);
+        }
+
+        userDAO.deleteById(user.getId());
+
+        return new ApiResponse(Boolean.TRUE, "You successfully deleted profile of: " + username);
+
     }
 
     @Override
     public ApiResponse giveAdmin(String username) {
-        return null;
+
+        User user = userDAO.getUserByName(username);
+        Set<Role> roles = new HashSet<>();
+        roles.add(roleDAO.findByName(RoleName.ROLE_ADMIN)
+                .orElseThrow(() -> new AppException("User role not set")));
+        roles.add(
+                roleDAO.findByName(RoleName.ROLE_USER).orElseThrow(() -> new AppException("User role not set")));
+        user.setRoles(roles);
+        userDAO.save(user);
+        return new ApiResponse(Boolean.TRUE, "You gave ADMIN role to user: " + username);
+
     }
 
     @Override
     public ApiResponse removeAdmin(String username) {
-        return null;
+
+        User user = userDAO.getUserByName(username);
+        Set<Role> roles = new HashSet<>();
+        roles.add(
+                roleDAO.findByName(RoleName.ROLE_USER).orElseThrow(() -> new AppException("User role not set")));
+        user.setRoles(roles);
+        userDAO.save(user);
+        return new ApiResponse(Boolean.TRUE, "You took ADMIN role from user: " + username);
+
     }
 
     @Override
-    public UserProfile setOrUpdateInfo(UserPrincipal currentUser) {
-        return null;
+    public UserProfile setOrUpdateInfo(UserPrincipal currentUser, InfoRequest infoRequest) {
+
+        User user = userDAO.findByUsername(currentUser.getUsername())
+                .orElseThrow(() -> new ResourceNotFoundException(USER, USERNAME, currentUser.getUsername()));
+
+        Info info = new Info().builder().firstName(infoRequest.getFirstName()).lastName(infoRequest.getLastName())
+                .phone(infoRequest.getPhone()).build();
+        if (user.getId().equals(currentUser.getId())
+                || currentUser.getAuthorities().contains(new SimpleGrantedAuthority(RoleName.ROLE_ADMIN.toString()))) {
+
+            user.setInfo(info);
+            User updatedUser = userDAO.save(user);
+
+            return new UserProfile().builder()
+                    .id(updatedUser.getId()).username(updatedUser.getUsername()).info(updatedUser.getInfo())
+                    .email(updatedUser.getEmail()).joinedAt(updatedUser.getCreatedAt())
+                    .build();
+        }
+
+        ApiResponse apiResponse = new ApiResponse(Boolean.FALSE, "You don't have permission to update users profile", HttpStatus.FORBIDDEN);
+        throw new AccessDeniedException(apiResponse);
+
     }
 }

@@ -14,8 +14,8 @@ import javax.validation.constraints.Size;
 @Data
 public class LoginRequest {
 
-    @NotEmpty(message = "Username must not be empty")
-    @Size(min = 3, max = 30, message = "Username must be between 3 and 30 characters")
+    @NotEmpty(message = "Username or Email must not be empty")
+    @Size(min = 3, max = 30, message = "Username or Email must be between 3 and 30 characters")
     private String usernameOrEmail;
 
     @NotEmpty(message = "Password must not be empty")

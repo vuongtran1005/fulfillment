@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.sql.Struct;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -31,7 +32,8 @@ public class UserPrincipal implements UserDetails {
     public static UserPrincipal build(User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName().name())).collect(Collectors.toList());
-
+        System.out.println(new UserPrincipal(user, authorities).getUsername());
+        System.out.println("BUILD");
         return new UserPrincipal(user, authorities);
     }
 
@@ -59,11 +61,11 @@ public class UserPrincipal implements UserDetails {
     }
 
     public String getFirstName() {
-        return user.getFirstName();
+        return user.getInfo().getFirstName();
     }
 
     public String getLastName() {
-        return user.getLastName();
+        return user.getInfo().getLastName();
     }
 
     @Override

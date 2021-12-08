@@ -3,10 +3,7 @@ package com.bluebelt.fulfillment.model.user;
 import com.bluebelt.fulfillment.model.audit.DateAudit;
 import com.bluebelt.fulfillment.model.role.Role;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
@@ -20,6 +17,7 @@ import java.util.Set;
 @Entity
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Table(name = "users", uniqueConstraints = { @UniqueConstraint(columnNames = { "username" }),
         @UniqueConstraint(columnNames = { "email" }) })
@@ -30,14 +28,6 @@ public class User extends DateAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @NotBlank
-    @Size(max = 40)
-    private String firstName;
-
-    @NotBlank
-    @Size(max = 40)
-    private String lastName;
 
     @NotBlank
     @Size(max = 15)
@@ -54,15 +44,16 @@ public class User extends DateAudit {
     @Email
     private String email;
 
-    private String phone;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    public User(String firstName, String lastName, String username, String password, String email) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "info_id")
+    private Info info;
+
+    public User(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
