@@ -7,6 +7,10 @@ public class AppConstants {
 
 	public static final int MAX_PAGE_SIZE = 30;
 
+	public static final String DEFAULT_SORT = "createdAt";
+
+	public static final String DEFAULT_DESC = "false";
+
 	public static final String CREATED_AT = "createdAt";
 
 	public static final String ID = "id";
@@ -23,7 +27,7 @@ public class AppConstants {
 
 	public static final String TAG = "Tag";
 
-	public static final String POST = "Post";
+	public static final String PRODUCT = "Product";
 
 	public static final String TODO = "ToDo";
 
@@ -34,4 +38,5 @@ public class AppConstants {
 	public static final String USERNAME_IS_ALREADY = "Username is already taken";
 
 	public static final String EMAIL_IS_ALREADY = "Email is already taken";
+
 }

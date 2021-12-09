@@ -32,11 +32,11 @@ public class RestControllerExceptionHandler {
 		return new ResponseEntity<>(apiResponse, status);
 	}
 
-//	@ExceptionHandler(AppException.class)
-//	public ResponseEntity<ExceptionResponse> resolveException(AppException exception) {
-//		ExceptionResponse exceptionResponse = exception.getExceptionResponse();
-//		return new ResponseEntity< >(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-//	}
+	@ExceptionHandler(AppException.class)
+	public ResponseEntity<ExceptionResponse> resolveException(AppException exception) {
+		ExceptionResponse exceptionResponse = exception.getExceptionResponse();
+		return new ResponseEntity< >(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 
 	@ExceptionHandler(UnauthorizedException.class)
 	@ResponseStatus(code = HttpStatus.UNAUTHORIZED)
@@ -54,12 +54,12 @@ public class RestControllerExceptionHandler {
 		return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
 	}
 
-//	@ExceptionHandler(ResourceNotFoundException.class)
-//	public ResponseEntity<ExceptionResponse> resolveException(ResourceNotFoundException exception) {
-//		ExceptionResponse exceptionResponse = exception.getExceptionResponse();
-//
-//		return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
-//	}
+	@ExceptionHandler(ResourceNotFoundException.class)
+	public ResponseEntity<ExceptionResponse> resolveException(ResourceNotFoundException exception) {
+		ExceptionResponse exceptionResponse = exception.getExceptionResponse();
+
+		return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+	}
 
 	@ExceptionHandler(AccessDeniedException.class)
 	public ResponseEntity<ApiResponse> resolveException(AccessDeniedException exception) {
@@ -67,16 +67,6 @@ public class RestControllerExceptionHandler {
 
 		return new ResponseEntity< >(apiResponse, HttpStatus.FORBIDDEN);
 	}
-
-//	@ExceptionHandler({ UsernameNotFoundException.class })
-//	@ResponseStatus(HttpStatus.BAD_REQUEST)
-//	public ResponseEntity<ExceptionResponse> resolveException(UsernameNotFoundException ex) {
-//		String message = ex.getMessage();
-//		List<String> messages = new ArrayList<>(1);
-//		messages.add(message);
-//		return new ResponseEntity<>(new ExceptionResponse(HttpStatus.BAD_REQUEST.getReasonPhrase(),
-//				HttpStatus.BAD_REQUEST.value(), messages), HttpStatus.BAD_REQUEST);
-//	}
 
 	@ExceptionHandler({ MethodArgumentNotValidException.class })
 	@ResponseStatus(HttpStatus.BAD_REQUEST)

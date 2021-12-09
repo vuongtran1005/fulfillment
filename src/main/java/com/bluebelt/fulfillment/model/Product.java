@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -21,9 +24,27 @@ public class Product extends UserDateAudit {
 
     private String title;
 
+    private String description;
+
+    private String status;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "product_tag", joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
+    private List<Tag> tags;
 
+    public List<Tag> getTags() {
+        return tags = tags == null ? null : new ArrayList<>(tags);
+    }
+
+    public void setTags(List<Tag> tags) {
+        if (tags == null) {
+            this.tags = null;
+        } else {
+            this.tags = Collections.unmodifiableList(tags);
+        }
+    }
 }

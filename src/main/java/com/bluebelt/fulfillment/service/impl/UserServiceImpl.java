@@ -16,6 +16,7 @@ import com.bluebelt.fulfillment.repository.UserRepository;
 import com.bluebelt.fulfillment.security.UserPrincipal;
 import com.bluebelt.fulfillment.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,20 +27,23 @@ import java.util.Set;
 
 import static com.bluebelt.fulfillment.utils.AppConstants.*;
 
-@RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userDAO;
-    private final RoleRepository roleDAO;
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserRepository userDAO;
+
+    @Autowired
+    private RoleRepository roleDAO;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     // password
 
     @Override
     public UserSummary getCurrentUser(UserPrincipal currentUser) {
-        return new UserSummary().builder().id(currentUser.getId()).username(currentUser.getUsername())
-                .firstName(currentUser.getFirstName()).lastName(currentUser.getLastName()).build();
+        return new UserSummary().builder().id(currentUser.getId()).username(currentUser.getUsername()).build();
     }
 
     @Override
@@ -187,8 +191,13 @@ public class UserServiceImpl implements UserService {
         User user = userDAO.findByUsername(currentUser.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException(USER, USERNAME, currentUser.getUsername()));
 
-        Info info = new Info().builder().firstName(infoRequest.getFirstName()).lastName(infoRequest.getLastName())
-                .phone(infoRequest.getPhone()).build();
+        String firstName = infoRequest.getFirstName();
+        String lastName = infoRequest.getLastName();
+        String phone = infoRequest.getPhone();
+
+        Info info = new Info().builder().firstName(firstName).lastName(lastName)
+                .phone(phone).build();
+
         if (user.getId().equals(currentUser.getId())
                 || currentUser.getAuthorities().contains(new SimpleGrantedAuthority(RoleName.ROLE_ADMIN.toString()))) {
 

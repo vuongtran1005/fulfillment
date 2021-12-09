@@ -4,6 +4,7 @@ import com.bluebelt.fulfillment.model.user.User;
 import com.bluebelt.fulfillment.repository.UserRepository;
 import com.bluebelt.fulfillment.security.UserPrincipal;
 import com.bluebelt.fulfillment.service.CustomUserDetailsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

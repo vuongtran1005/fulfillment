@@ -5,9 +5,6 @@ import lombok.*;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class JwtAuthenticationResponse {
 
     private String accessToken;
@@ -16,4 +13,10 @@ public class JwtAuthenticationResponse {
     private String email;
     private List<String> roles;
 
+    public JwtAuthenticationResponse(String accessToken, String username, String email, List<String> roles) {
+        this.accessToken = accessToken;
+        this.username = username;
+        this.email = email;
+        this.roles = roles;
+    }
 }

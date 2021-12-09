@@ -14,6 +14,7 @@ import com.bluebelt.fulfillment.repository.RoleRepository;
 import com.bluebelt.fulfillment.repository.UserRepository;
 import com.bluebelt.fulfillment.security.JwtTokenProvider;
 import com.bluebelt.fulfillment.security.UserPrincipal;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,7 @@ import java.util.stream.Collectors;
 
 import static com.bluebelt.fulfillment.utils.AppConstants.*;
 
+@Tag(name = "Authentication")
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthenticationController {
@@ -86,9 +88,10 @@ public class AuthenticationController {
         List<String> roles = userPrincipal.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
+        JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse(jwt, userPrincipal.getUsername(),
+                userPrincipal.getEmail(), roles);
         return ResponseEntity
-                .ok(new JwtAuthenticationResponse().builder().accessToken(jwt).username(userPrincipal.getUsername())
-                        .email(userPrincipal.getEmail()).roles(roles).build());
+                .ok(jwtAuthenticationResponse);
     }
 
     @PostMapping("/signup")
@@ -101,19 +104,11 @@ public class AuthenticationController {
             throw new FulfillmentapiException(HttpStatus.BAD_REQUEST, EMAIL_IS_ALREADY);
         }
 
-        String firstName = signUpRequest.getFirstName() == null ? null : signUpRequest.getFirstName().toLowerCase();
-
-        String lastName = signUpRequest.getLastName() == null ? null : signUpRequest.getLastName().toLowerCase();
-
         String username = signUpRequest.getUsername().toLowerCase();
 
         String email = signUpRequest.getEmail().toLowerCase();
 
-        String phone = signUpRequest.getPhone() == null ? null : signUpRequest.getPhone();
-
         String password = passwordEncoder.encode(signUpRequest.getPassword());
-
-        Info info = new Info().builder().firstName(firstName).lastName(lastName).phone(phone).build();
 
         User user = new User().builder().username(username).email(email).password(password).build();
 

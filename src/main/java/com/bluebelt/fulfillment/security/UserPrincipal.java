@@ -58,14 +58,6 @@ public class UserPrincipal implements UserDetails {
         return user.getEmail();
     }
 
-    public String getFirstName() {
-        return user.getInfo().getFirstName();
-    }
-
-    public String getLastName() {
-        return user.getInfo().getLastName();
-    }
-
     @Override
     public boolean isAccountNonExpired() {
         return true;
