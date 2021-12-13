@@ -40,11 +40,8 @@ public class Category extends UserDateAudit {
     }
 
     public void setProducts(List<Product> products) {
-        if (products == null) {
-            this.products = null;
-        } else {
-            this.products = Collections.unmodifiableList(products); // trả về một list không thể sửa đổi
-        }
+        // trả về một list không thể sửa đổi
+        this.products = products == null ? null : Collections.unmodifiableList(products);
     }
 
     public Category(String title) {

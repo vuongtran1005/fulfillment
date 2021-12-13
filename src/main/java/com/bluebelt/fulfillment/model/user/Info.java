@@ -6,6 +6,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.Date;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -31,6 +32,11 @@ public class Info extends UserDateAudit {
     private String lastName;
 
     private String phone;
+
+    private Date dateOfBirth;
+
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @OneToOne(mappedBy = "info")
     private User user;

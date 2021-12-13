@@ -1,4 +1,4 @@
-package com.bluebelt.fulfillment.payload;
+package com.bluebelt.fulfillment.payload.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

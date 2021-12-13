@@ -1,9 +1,9 @@
 package com.bluebelt.fulfillment.service;
 
 import com.bluebelt.fulfillment.model.user.User;
-import com.bluebelt.fulfillment.payload.UserIdentityAvailability;
-import com.bluebelt.fulfillment.payload.UserProfile;
-import com.bluebelt.fulfillment.payload.UserSummary;
+import com.bluebelt.fulfillment.payload.response.UserIdentityAvailability;
+import com.bluebelt.fulfillment.payload.response.UserProfile;
+import com.bluebelt.fulfillment.payload.response.UserSummary;
 import com.bluebelt.fulfillment.payload.request.InfoRequest;
 import com.bluebelt.fulfillment.payload.request.SignUpRequest;
 import com.bluebelt.fulfillment.payload.response.ApiResponse;
@@ -24,6 +24,8 @@ public interface UserService {
     User updateUser(User newUser, String username, UserPrincipal currentUser);
 
     ApiResponse deleteUser(String username, UserPrincipal currentUser);
+
+    ApiResponse updateAvatar(String avatar, UserPrincipal currentUser);
 
     ApiResponse giveAdmin(String username);
 

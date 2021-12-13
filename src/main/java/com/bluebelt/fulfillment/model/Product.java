@@ -41,10 +41,6 @@ public class Product extends UserDateAudit {
     }
 
     public void setTags(List<Tag> tags) {
-        if (tags == null) {
-            this.tags = null;
-        } else {
-            this.tags = Collections.unmodifiableList(tags);
-        }
+        this.tags = tags == null ? null : Collections.unmodifiableList(tags);
     }
 }

@@ -1,6 +1,8 @@
 package com.bluebelt.fulfillment.payload;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 
 @Data
@@ -8,18 +10,15 @@ import lombok.*;
 @AllArgsConstructor
 @With
 @Builder
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class Meta {
 
-    @JsonProperty("total_elements")
     public long totalElements;
 
-    @JsonProperty("total_pages")
     public int totalPages;
 
-    @JsonProperty("page")
     public int page;
 
-    @JsonProperty("size")
     public int size;
 
 }

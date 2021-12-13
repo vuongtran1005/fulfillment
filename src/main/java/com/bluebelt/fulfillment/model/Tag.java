@@ -42,11 +42,7 @@ public class Tag extends UserDateAudit {
     }
 
     public void setProducts(List<Product> products) {
-        if (products == null) {
-            this.products = null;
-        } else {
-            this.products = Collections.unmodifiableList(products);
-        }
+        this.products = products == null ? null : Collections.unmodifiableList(products);
     }
 
 }

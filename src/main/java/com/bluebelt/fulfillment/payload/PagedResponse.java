@@ -1,6 +1,8 @@
 package com.bluebelt.fulfillment.payload;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 import org.springframework.data.domain.Page;
 
@@ -13,12 +15,11 @@ import java.util.List;
 @AllArgsConstructor
 @With
 @Builder
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class PagedResponse<T> {
 
-    @JsonProperty("_meta")
     public Meta meta;
 
-    @JsonProperty("content")
     public List<T> content;
 
     public static <T> PagedResponse<T> from(Page<T> page) {

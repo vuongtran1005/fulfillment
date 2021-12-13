@@ -1,16 +1,16 @@
 package com.bluebelt.fulfillment.security;
 
+import com.bluebelt.fulfillment.model.user.Photo;
 import com.bluebelt.fulfillment.model.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Struct;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.bluebelt.fulfillment.utils.AppConstants.AVATAR;
 
 public class UserPrincipal implements UserDetails {
 
@@ -56,6 +56,12 @@ public class UserPrincipal implements UserDetails {
 
     public String getEmail() {
         return user.getEmail();
+    }
+
+    public String getAvatar() {
+        List<Photo> photos = user.getPhotos();
+        Optional<Photo> existAvatar = photos.stream().filter(photo -> AVATAR.equals(photo.getType())).findFirst();
+        return existAvatar.isPresent() ? existAvatar.get().getUrl() : null;
     }
 
     @Override

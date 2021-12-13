@@ -39,4 +39,6 @@ public class AppConstants {
 
 	public static final String EMAIL_IS_ALREADY = "Email is already taken";
 
+	public static final String AVATAR = "AVATAR";
+
 }
